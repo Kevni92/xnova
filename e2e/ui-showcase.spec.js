@@ -34,6 +34,12 @@ test('UI-Showcase zeigt und bedient zentrale Spielkomponenten', async ({ page })
   await page.getByRole('button', { name: 'Gameplay' }).click();
   await expect(page.getByRole('heading', { name: 'Gebäude und Forschung' })).toBeVisible();
   await expect(page.getByText('Metallmine · Stufe 18')).toBeVisible();
+  await expect(page.getByTestId('galaxy-position-8')).toContainText('Nova Prime');
+  await expect(page.getByTestId('galaxy-position-10')).toContainText('Eigenschaften werden erst bei Kolonisierung enthüllt');
+
+  await page.getByTestId('colonize-10').click();
+  await expect(page.getByTestId('colony-notice')).toContainText('Kolonisierung erfolgreich');
+  await expect(page.getByTestId('galaxy-position-10')).toContainText('Felder');
 
   await page.getByTestId('mobile-menu-toggle').click();
   await expect(page.getByTestId('ui-showcase')).toHaveClass(/is-menu-open/);
