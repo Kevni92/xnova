@@ -1,7 +1,9 @@
 const DATABASE_NAME = 'xnova-singleplayer';
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 const USERS_STORE = 'users';
 const META_STORE = 'meta';
+const COLONIES_STORE = 'colonies';
+const SYSTEM_INDEX = 'systemKey';
 const SESSION_KEY = 'current-session';
 
 export function createIndexedDbStore(indexedDb = globalThis.indexedDB) {
@@ -38,6 +40,20 @@ export function createIndexedDbStore(indexedDb = globalThis.indexedDB) {
         store.delete(SESSION_KEY),
       );
     },
+
+    async getColony(coordinates) {
+      return request(databasePromise, COLONIES_STORE, 'readonly', (store) => store.get(coordinates));
+    },
+
+    async getColoniesInSystem(systemKey) {
+      return request(databasePromise, COLONIES_STORE, 'readonly', (store) =>
+        store.index(SYSTEM_INDEX).getAll(systemKey),
+      );
+    },
+
+    async addColony(colony) {
+      await request(databasePromise, COLONIES_STORE, 'readwrite', (store) => store.add(colony));
+    },
   };
 }
 
@@ -52,6 +68,14 @@ function openDatabase(indexedDb) {
       }
       if (!database.objectStoreNames.contains(META_STORE)) {
         database.createObjectStore(META_STORE, { keyPath: 'key' });
+      }
+
+      const coloniesStore = database.objectStoreNames.contains(COLONIES_STORE)
+        ? openRequest.transaction.objectStore(COLONIES_STORE)
+        : database.createObjectStore(COLONIES_STORE, { keyPath: 'coordinates' });
+
+      if (!coloniesStore.indexNames.contains(SYSTEM_INDEX)) {
+        coloniesStore.createIndex(SYSTEM_INDEX, SYSTEM_INDEX, { unique: false });
       }
     };
 
