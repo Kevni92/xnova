@@ -5,6 +5,7 @@ test('Gebäude können betrachtet und in die Bauwarteschlange aufgenommen werden
   await page.getByTestId('register-email').fill('builder@example.com');
   await page.getByTestId('register-password').fill('geheim123');
   await page.getByTestId('register-submit').click();
+  await expect(page.getByTestId('notice')).toContainText('Registrierung erfolgreich');
   await page.getByTestId('login-email').fill('builder@example.com');
   await page.getByTestId('login-password').fill('geheim123');
   await page.getByTestId('login-submit').click();
@@ -12,7 +13,7 @@ test('Gebäude können betrachtet und in die Bauwarteschlange aufgenommen werden
   await page.getByTestId('username-submit').click();
 
   await expect(page.getByTestId('resource-metal')).toContainText('500');
-  await page.getByRole('button', { name: 'Gebäude', exact: true }).click();
+  await page.getByTestId('nav-buildings').click();
   const mine = page.getByTestId('building-metalMine');
   await expect(mine).toContainText('Metallmine');
   await mine.getByRole('button', { name: 'Stufe 1 ausbauen' }).click();

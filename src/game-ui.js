@@ -257,7 +257,7 @@ function resourceMarkup(key, meta, planet) {
 }
 
 function navButton(key, label, icon, active) {
-  return `<button class="nav-item ${active === key ? 'is-active' : ''}" data-view="${key}"><span>${icon}</span>${label}</button>`;
+  return `<button class="nav-item ${active === key ? 'is-active' : ''}" data-view="${key}" data-testid="nav-${key}"><span>${icon}</span>${label}</button>`;
 }
 
 function statCard(label, value, text) {
