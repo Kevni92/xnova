@@ -22,13 +22,28 @@ jobs:
           node-version: 22
 
       - name: Abhängigkeiten installieren
-        run: npm install --no-audit --no-fund
+        shell: bash
+        run: |
+          if ! npm install --no-audit --no-fund > /tmp/npm-install.log 2>&1; then
+            cat /tmp/npm-install.log
+            exit 1
+          fi
 
       - name: Unit-Tests
-        run: npm test
+        shell: bash
+        run: |
+          if ! npm test > /tmp/unit-tests.log 2>&1; then
+            cat /tmp/unit-tests.log
+            exit 1
+          fi
 
       - name: Produktions-Build
-        run: npm run build
+        shell: bash
+        run: |
+          if ! npm run build > /tmp/build.log 2>&1; then
+            cat /tmp/build.log
+            exit 1
+          fi
 
       - name: Browser installieren
         shell: bash
