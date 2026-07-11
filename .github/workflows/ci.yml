@@ -31,7 +31,12 @@ jobs:
         run: npm run build
 
       - name: Browser installieren
-        run: npx playwright install --with-deps chromium
+        shell: bash
+        run: |
+          if ! npx playwright install --with-deps chromium > /tmp/playwright-install.log 2>&1; then
+            cat /tmp/playwright-install.log
+            exit 1
+          fi
 
       - name: Browser-Test
         run: npm run test:e2e
