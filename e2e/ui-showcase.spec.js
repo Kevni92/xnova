@@ -4,6 +4,11 @@ test('UI-Showcase zeigt und bedient zentrale Spielkomponenten', async ({ page })
   await page.setViewportSize({ width: 980, height: 900 });
   await page.goto('/');
 
+  const authButtonRadius = await page.getByTestId('register-submit').evaluate((element) =>
+    Number.parseFloat(getComputedStyle(element).borderTopLeftRadius),
+  );
+  expect(authButtonRadius).toBeLessThanOrEqual(2);
+
   await page.getByTestId('register-email').fill('designer@example.com');
   await page.getByTestId('register-password').fill('geheim123');
   await page.getByTestId('register-submit').click();
@@ -18,6 +23,22 @@ test('UI-Showcase zeigt und bedient zentrale Spielkomponenten', async ({ page })
   await expect(page.getByTestId('ui-showcase')).toBeVisible();
   await expect(page.getByTestId('resource-metal')).toContainText('12.480');
   await expect(page.getByRole('heading', { name: 'Aktionen und Auswahl' })).toBeVisible();
+
+  const visualLanguage = await page.evaluate(() => {
+    const panel = getComputedStyle(document.querySelector('.component-panel'));
+    const primaryButton = getComputedStyle(document.querySelector('.button--primary'));
+    const shell = getComputedStyle(document.querySelector('.game-shell'));
+
+    return {
+      panelRadius: Number.parseFloat(panel.borderTopLeftRadius),
+      primaryShadow: primaryButton.boxShadow,
+      accent: shell.getPropertyValue('--primary').trim(),
+    };
+  });
+
+  expect(visualLanguage.panelRadius).toBeLessThanOrEqual(2);
+  expect(visualLanguage.primaryShadow).not.toBe('none');
+  expect(visualLanguage.accent).toBe('#24d6d4');
 
   const buildingsChip = page.getByRole('button', { name: 'Gebäude' });
   await buildingsChip.click();
