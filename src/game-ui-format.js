@@ -57,5 +57,5 @@ export function resourceMarkup(key, meta, planet) {
 
 export function navButton(key, label, icon, active) {
   const selected = active === key;
-  return `<button class="nav-item ${selected ? 'is-active' : ''}" data-view="${key}" data-testid="nav-${key}" aria-pressed="${selected}"><span>${icon}</span>${label}</button>`;
+  return `<button class="main-menu__item${selected ? ' is-active' : ''}" data-view="${key}" data-testid="nav-${key}" aria-pressed="${selected}"><span class="main-menu__icon" aria-hidden="true">${icon}</span><span>${label}</span></button>`;
 }
