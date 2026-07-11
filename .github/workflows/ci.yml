@@ -22,49 +22,16 @@ jobs:
           node-version: 22
 
       - name: Abhängigkeiten installieren
-        shell: bash
-        run: |
-          if ! npm install --no-audit --no-fund > /tmp/npm-install.log 2>&1; then
-            cat /tmp/npm-install.log
-            exit 1
-          fi
+        run: npm install --no-audit --no-fund
 
       - name: Unit-Tests
-        shell: bash
-        run: |
-          if ! npm test > /tmp/unit-tests.log 2>&1; then
-            cat /tmp/unit-tests.log
-            exit 1
-          fi
+        run: npm test
 
       - name: Produktions-Build
-        shell: bash
-        run: |
-          if ! npm run build > /tmp/build.log 2>&1; then
-            cat /tmp/build.log
-            exit 1
-          fi
+        run: npm run build
 
       - name: Browser installieren
-        shell: bash
-        run: |
-          if ! npx playwright install --with-deps chromium > /tmp/playwright-install.log 2>&1; then
-            cat /tmp/playwright-install.log
-            exit 1
-          fi
+        run: npx playwright install --with-deps chromium
 
       - name: Browser-Test
-        shell: bash
-        run: |
-          if ! npm run test:e2e > /tmp/browser-tests.log 2>&1; then
-            cat /tmp/browser-tests.log
-            exit 1
-          fi
-
-      - name: Browser-Test-Log sichern
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: browser-test-log
-          path: /tmp/browser-tests.log
-          retention-days: 1
+        run: npm run test:e2e
