@@ -1,6 +1,7 @@
 import './styles.css';
 import './showcase.css';
 import { WorkerClient } from './client/worker-client.js';
+import { mountGalaxyFeature } from './galaxy-ui.js';
 import { bindUiShowcase, renderUiShowcase } from './ui-showcase.js';
 
 const app = document.querySelector('#app');
@@ -16,13 +17,13 @@ async function start() {
 
   try {
     const user = await server.call('session');
-    renderForUser(user);
+    await renderForUser(user);
   } catch (error) {
     renderFatalError(error.message);
   }
 }
 
-function renderForUser(user) {
+async function renderForUser(user) {
   if (!user) {
     renderAuth();
     return;
@@ -33,7 +34,7 @@ function renderForUser(user) {
     return;
   }
 
-  renderDashboard(user);
+  await renderDashboard(user);
 }
 
 function renderAuth() {
@@ -100,9 +101,10 @@ function renderUsernameSetup(user) {
   document.querySelector('#username-form').addEventListener('submit', handleUsername);
 }
 
-function renderDashboard(user) {
+async function renderDashboard(user) {
   app.innerHTML = page(renderUiShowcase(user), 'game-root');
   bindUiShowcase({ onLogout: handleLogout });
+  await mountGalaxyFeature({ server });
 }
 
 async function handleRegister(event) {
@@ -136,7 +138,7 @@ async function handleLogin(event) {
       password: values.get('password'),
     });
     notice = null;
-    renderForUser(user);
+    await renderForUser(user);
   } catch (error) {
     notice = { type: 'error', text: error.message };
     renderAuth();
@@ -152,7 +154,7 @@ async function handleUsername(event) {
   try {
     const user = await server.call('setUsername', { username: values.get('username') });
     notice = null;
-    renderDashboard(user);
+    await renderDashboard(user);
   } catch (error) {
     notice = { type: 'error', text: error.message };
     const user = await server.call('session');
