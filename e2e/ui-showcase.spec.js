@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('technische UI bleibt erhalten und Gebäude funktionieren real', async ({ page }) => {
-  await page.setViewportSize({ width: 980, height: 900 });
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/');
 
   const authButtonRadius = await page.getByTestId('register-submit').evaluate((element) =>
