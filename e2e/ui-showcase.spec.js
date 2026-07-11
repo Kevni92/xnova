@@ -12,7 +12,7 @@ test('Gebäude können betrachtet und in die Bauwarteschlange aufgenommen werden
   await page.getByTestId('username-submit').click();
 
   await expect(page.getByTestId('resource-metal')).toContainText('500');
-  await page.getByRole('button', { name: 'Gebäude' }).click();
+  await page.getByRole('button', { name: 'Gebäude', exact: true }).click();
   const mine = page.getByTestId('building-metalMine');
   await expect(mine).toContainText('Metallmine');
   await mine.getByRole('button', { name: 'Stufe 1 ausbauen' }).click();

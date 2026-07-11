@@ -42,7 +42,7 @@ describe('Planetare Wirtschaft und Gebäude', () => {
   });
 
   it('zieht Ausbaukosten sofort ab und stellt das Gebäude nach Ablauf fertig', async () => {
-    const context = setup();
+    const context = setup({ buildings: { solarPlant: 1 } });
     const queued = await context.service.queueUpgrade({
       ownerEmail: context.ownerEmail,
       coordinates: context.coordinates,
