@@ -8,8 +8,11 @@ Barebone eines statischen Singleplayer-Weltraumspiels. Der lokale „Server“ l
 - Passwort-Hashing über PBKDF2/Web Crypto
 - Login und lokale Sitzung
 - Username-Vergabe nach dem ersten Login
-- Begrüßungsansicht und Logout
-- Unit-Tests, Browser-Test und Produktions-Build in GitHub Actions
+- Responsive Spielansicht mit Hauptmenü und Ressourcenleiste
+- Interaktive UI-Komponenten-Referenz für Formulare, Tabellen, Feedback und Zustände
+- Spieltypische Beispiele für Gebäude, Forschung, Warteschlange, Flotten und Galaxie
+- Logout aus der Spielansicht
+- Unit-Tests, Browser-Tests und Produktions-Build in GitHub Actions
 
 ## Lokal starten
 
@@ -17,6 +20,8 @@ Barebone eines statischen Singleplayer-Weltraumspiels. Der lokale „Server“ l
 npm install
 npm run dev
 ```
+
+Nach Registrierung, Login und Username-Vergabe öffnet sich die UI-Showcase-Seite.
 
 ## Tests
 

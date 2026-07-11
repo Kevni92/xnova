@@ -1,5 +1,7 @@
 import './styles.css';
+import './showcase.css';
 import { WorkerClient } from './client/worker-client.js';
+import { bindUiShowcase, renderUiShowcase } from './ui-showcase.js';
 
 const app = document.querySelector('#app');
 const worker = new Worker(new URL('./worker/server.worker.js', import.meta.url), { type: 'module' });
@@ -99,15 +101,8 @@ function renderUsernameSetup(user) {
 }
 
 function renderDashboard(user) {
-  app.innerHTML = page(`
-    <section class="card compact centered" data-testid="dashboard-screen">
-      <p class="eyebrow">XNOVA</p>
-      <h1 data-testid="greeting">Hallo ${escapeHtml(user.username)}, du bist eingeloggt.</h1>
-      <button id="logout-button" data-testid="logout-button" type="button">Ausloggen</button>
-    </section>
-  `);
-
-  document.querySelector('#logout-button').addEventListener('click', handleLogout);
+  app.innerHTML = page(renderUiShowcase(user), 'game-root');
+  bindUiShowcase({ onLogout: handleLogout });
 }
 
 async function handleRegister(event) {
@@ -193,8 +188,8 @@ function noticeMarkup() {
   return `<p class="notice ${notice.type}" data-testid="notice">${escapeHtml(notice.text)}</p>`;
 }
 
-function page(content) {
-  return `<div class="shell">${content}</div>`;
+function page(content, className = 'shell') {
+  return `<div class="${className}">${content}</div>`;
 }
 
 function setBusy(form, busy) {
