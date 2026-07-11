@@ -7,6 +7,7 @@ test('UI-Showcase zeigt und bedient zentrale Spielkomponenten', async ({ page })
   await page.getByTestId('register-email').fill('designer@example.com');
   await page.getByTestId('register-password').fill('geheim123');
   await page.getByTestId('register-submit').click();
+  await expect(page.getByTestId('notice')).toContainText('Registrierung erfolgreich');
 
   await page.getByTestId('login-email').fill('designer@example.com');
   await page.getByTestId('login-password').fill('geheim123');
