@@ -91,6 +91,16 @@ export const BUILDING_DEFINITIONS = Object.freeze({
     baseDuration: 60,
     effect: 'researchSpeed',
   }),
+  shipyard: definition({
+    name: 'Raumschiffwerft',
+    shortName: 'Werft',
+    description: 'Fertigt zivile und militärische Schiffe in einer planetaren Produktionswarteschlange.',
+    icon: 'W',
+    baseCost: { metal: 400, crystal: 200, deuterium: 100 },
+    costFactor: 2,
+    baseDuration: 55,
+    effect: 'shipyardSpeed',
+  }),
 });
 
 export const BUILDING_KEYS = Object.freeze(Object.keys(BUILDING_DEFINITIONS));
@@ -187,6 +197,7 @@ export function describeBuildingEffect(key, targetLevel, bonuses = {}, baseBuild
   if (effect === 'crystalStorage') return `${formatNumber(economy.storage.crystal)} Kristall Kapazität`;
   if (effect === 'deuteriumStorage') return `${formatNumber(economy.storage.deuterium)} Deuterium Kapazität`;
   if (effect === 'researchSpeed') return `Laborstufe ${targetLevel} für schnellere Forschung`;
+  if (effect === 'shipyardSpeed') return `Werftstufe ${targetLevel} für kürzere Schiffsproduktion`;
   return `${Math.round((1 - 1 / (1 + targetLevel * 0.5)) * 100)} % kürzere Bauzeit`;
 }
 
