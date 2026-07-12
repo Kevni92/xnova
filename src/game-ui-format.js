@@ -1,12 +1,12 @@
 export const RESOURCE_META = Object.freeze({
-  metal: { label: 'Metall', icon: 'M' },
-  crystal: { label: 'Kristall', icon: 'K' },
-  deuterium: { label: 'Deuterium', icon: 'D' },
+  metal: { label: 'Metall', iconHref: './assets/icons/icon_resource_metal.svg#icon-resource-metal' },
+  crystal: { label: 'Kristall', iconHref: './assets/icons/icon_resource_crystal.svg#icon-resource-crystal' },
+  deuterium: { label: 'Deuterium', iconHref: './assets/icons/icon_resource_deuterium.svg#icon-resource-deuterium' },
 });
 
 const RESOURCE_REFERENCE_META = Object.freeze({
   ...RESOURCE_META,
-  energy: { label: 'Energie', icon: 'E' },
+  energy: { label: 'Energie', iconHref: './assets/icons/icon_resource_energy.svg#icon-resource-energy' },
 });
 
 export function formatNumber(value) {
@@ -49,13 +49,23 @@ export function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
-export function resourceIconMarkup(key) {
+export function resourceIconMarkup(key, { className = '', decorative = false } = {}) {
   const meta = RESOURCE_REFERENCE_META[key];
   if (!meta) {
     return '';
   }
 
-  return `<span class="resource-icon resource-icon--${key}" aria-label="${meta.label}" title="${meta.label}">${meta.icon}</span>`;
+  const classes = ['resource-icon', `resource-icon--${key}`, className].filter(Boolean).join(' ');
+  const accessibility = decorative
+    ? 'aria-hidden="true"'
+    : `role="img" aria-label="${meta.label}" title="${meta.label}"`;
+
+  return `<span class="${classes}" ${accessibility}><svg class="resource-icon__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="${meta.iconHref}"></use></svg></span>`;
+}
+
+export function resourceValueMarkup(key, value, { className = '', decorativeIcon = true } = {}) {
+  const classes = ['resource-value', className].filter(Boolean).join(' ');
+  return `<span class="${classes}">${resourceIconMarkup(key, { className: 'resource-icon--plain resource-value__icon', decorative: decorativeIcon })}<span>${escapeHtml(value)}</span></span>`;
 }
 
 export function resourceTextMarkup(value) {
@@ -76,7 +86,7 @@ export function costMarkup(costs) {
 }
 
 export function resourceMarkup(key, meta, planet) {
-  return `<div class="resource-item" data-testid="resource-${key}"><span class="resource-item__icon resource-item__icon--${key}">${meta.icon}</span><span><small>${meta.label}</small><strong>${formatNumber(planet.resources[key])}</strong></span><em class="resource-item__delta">+${formatNumber(planet.production[key])}/h</em></div>`;
+  return `<div class="resource-item" data-testid="resource-${key}">${resourceIconMarkup(key, { className: 'resource-item__icon', decorative: true })}<span><small>${meta.label}</small><strong>${formatNumber(planet.resources[key])}</strong></span><em class="resource-item__delta">+${formatNumber(planet.production[key])}/h</em></div>`;
 }
 
 export function navButton(key, label, icon, active) {

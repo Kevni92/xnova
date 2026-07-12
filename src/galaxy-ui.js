@@ -1,3 +1,5 @@
+import { resourceValueMarkup } from './game-ui-format.js';
+
 const DEFAULT_SYSTEM = Object.freeze({ galaxy: 1, system: 24 });
 
 export async function mountGalaxyFeature({ server }) {
@@ -66,7 +68,7 @@ function positionMarkup(entry) {
 
   const colony = entry.colony;
   const resourceBonus = colony.bonuses.resource
-    ? `${colony.bonuses.resource.label} +${colony.bonuses.resource.percent}%`
+    ? resourceValueMarkup(colony.bonuses.resource.resource, formatPercent(colony.bonuses.resource.percent))
     : 'Kein Rohstoffbonus';
 
   return `
@@ -74,9 +76,9 @@ function positionMarkup(entry) {
       <span class="galaxy-row__position">${entry.position}</span>
       <span class="planet-dot planet-dot--large planet-dot--${planetTone(colony.planetType)}" aria-hidden="true"></span>
       <div><strong>${escapeHtml(colony.name)}</strong><small>${escapeHtml(colony.planetType)} · ${colony.fields} Felder · ${formatTemperature(colony.temperature)}</small></div>
-      <span class="galaxy-row__bonus">Solar ${formatPercent(colony.bonuses.solarEnergy)} · Deuterium ${formatPercent(colony.bonuses.deuterium)}</span>
+      <span class="galaxy-row__bonus">${resourceValueMarkup('energy', formatPercent(colony.bonuses.solarEnergy))} · ${resourceValueMarkup('deuterium', formatPercent(colony.bonuses.deuterium))}</span>
       <span class="badge badge--${colony.ownedByViewer ? 'info' : 'success'}">${colony.ownedByViewer ? 'Eigener Planet' : escapeHtml(colony.ownerName)}</span>
-      <span class="galaxy-row__bonus">${escapeHtml(resourceBonus)}</span>
+      <span class="galaxy-row__bonus">${resourceBonus}</span>
     </div>
   `;
 }
