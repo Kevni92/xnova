@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <path d="m12 2.5 6.5 6-2.5 10-4 3-4-3-2.5-10z"/>
-  <path d="m12 2.5-2 6 2 13M5.5 8.5H18.5M10 8.5l-2 10M10 8.5l6 10M18.5 8.5 12 21.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+  <g id="icon-resource-crystal" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m12 2.5 6.5 6-2.5 10-4 3-4-3-2.5-10z"/>
+    <path d="m12 2.5-2 6 2 13M5.5 8.5H18.5M10 8.5l-2 10M10 8.5l6 10M18.5 8.5 12 21.5"/>
+  </g>
 </svg>
