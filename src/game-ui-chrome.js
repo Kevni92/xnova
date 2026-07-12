@@ -1,4 +1,14 @@
-import { RESOURCE_META, escapeHtml, formatNumber, formatPercent, navButton, resourceMarkup, signed } from './game-ui-format.js';
+import {
+  RESOURCE_META,
+  escapeHtml,
+  formatNumber,
+  formatPercent,
+  navButton,
+  resourceIconMarkup,
+  resourceMarkup,
+  resourceValueMarkup,
+  signed,
+} from './game-ui-format.js';
 
 const NAV_ITEMS = Object.freeze([
   ['overview', 'Übersicht', '⌂'],
@@ -33,7 +43,7 @@ export function chromeMarkup(state, user, view) {
       <div class="resource-strip" aria-label="Verfügbare Ressourcen">
         ${Object.entries(RESOURCE_META).map(([key, meta]) => resourceMarkup(key, meta, planet)).join('')}
         <div class="resource-item" data-testid="resource-energy">
-          <span class="resource-item__icon resource-item__icon--energy">E</span>
+          ${resourceIconMarkup('energy', { className: 'resource-item__icon', decorative: true })}
           <span><small>Energie</small><strong>${signed(planet.energy.available)}</strong></span>
           <em class="resource-item__delta">${formatPercent(planet.energy.factor * 100)} Leistung</em>
         </div>
@@ -69,7 +79,7 @@ export function chromeMarkup(state, user, view) {
       <nav class="main-menu">${NAV_ITEMS.map(([key, label, icon]) => navButton(key, label, icon, view)).join('')}</nav>
       <div class="sidebar__footer">
         <div class="status-dot"><span></span> Lokaler Spielserver aktiv</div>
-        <small>${escapeHtml(planet.name)} · ${planet.usedFields}/${planet.fields} Felder · ${formatNumber(planet.resources.metal)} Metall</small>
+        <small>${escapeHtml(planet.name)} · ${planet.usedFields}/${planet.fields} Felder · ${resourceValueMarkup('metal', formatNumber(planet.resources.metal))}</small>
       </div>
     </aside>
     <button class="mobile-backdrop" type="button" data-action="toggle-menu" aria-label="Hauptmenü schließen"></button>
