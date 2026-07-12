@@ -9,6 +9,8 @@ Diese Regeln gelten innerhalb von `src/` für UI-Rendering-Dateien, insbesondere
 - Buchstaben-Platzhalter wie `M`, `K`, `D` oder `E`, Emojis und reine Textwerte sind kein Ersatz für die Ressourcen-Icons.
 - UI-Code verwendet die zentralen Funktionen `resourceIconMarkup()` und `resourceValueMarkup()` aus `src/game-ui-format.js`; SVG-Markup oder Asset-Pfade werden nicht in einzelnen Komponenten dupliziert.
 - Ist der Ressourcenname bereits als Text vorhanden, darf das Icon dekorativ mit `aria-hidden="true"` sein. Ohne sichtbaren Text benötigt das Icon einen zugänglichen Namen.
+- Ressourcen-Icons werden überall ohne äußeren Rahmen, Hintergrundfläche oder Box-Shadow dargestellt.
+- Metall wird in Rot (`#ff5d62`) dargestellt; Kristall, Deuterium und Energie behalten ihre festgelegten Ressourcenfarben.
 
 ## SVG-Stil
 
