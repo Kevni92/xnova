@@ -3,13 +3,19 @@ import { renderGameShell } from './game-ui-shell.js';
 
 export async function mountGameFeature({ root, server, user, onLogout }) {
   const model = {
-    state: null, detail: null, galaxy: null, view: 'overview', notice: null,
+    state: null, detail: null, galaxy: null, research: null, view: 'overview', notice: null,
     galaxyNotice: null, loading: false, menuOpen: false,
   };
 
   async function loadGalaxy() {
     const [galaxy, system] = model.state.activePlanet.coordinates.split(':').map(Number);
     model.galaxy = await server.call('getSystem', { galaxy, system });
+  }
+
+  async function loadResearch() {
+    model.research = await server.call('getResearchState', {
+      coordinates: model.state.activePlanet.coordinates,
+    });
   }
 
   async function refresh({ quiet = false } = {}) {
@@ -24,6 +30,7 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
         });
       }
       if (model.view === 'galaxy') await loadGalaxy();
+      if (model.view === 'research') await loadResearch();
       if (!quiet) model.notice = null;
     } catch (error) {
       model.notice = { tone: 'danger', text: error.message };
@@ -52,6 +59,8 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
           buildingKey: model.detail.key,
         });
       }
+      if (model.view === 'research') await loadResearch();
+      if (model.view === 'galaxy') await loadGalaxy();
     } catch (error) {
       model.notice = { tone: 'danger', text: error.message };
     } finally {
@@ -67,6 +76,9 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
       model.menuOpen = false;
       if (view === 'galaxy') {
         try { await loadGalaxy(); } catch (error) { model.galaxyNotice = { tone: 'danger', text: error.message }; }
+      }
+      if (view === 'research') {
+        try { await loadResearch(); } catch (error) { model.notice = { tone: 'danger', text: error.message }; }
       }
       render();
     },
@@ -101,6 +113,14 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
       return perform(() => server.call('cancelBuildJob', {
         coordinates: model.state.activePlanet.coordinates, jobId,
       }), 'Bauauftrag abgebrochen. 75 % der Kosten wurden erstattet.');
+    },
+    startResearch(researchKey, name) {
+      return perform(() => server.call('startResearch', {
+        coordinates: model.state.activePlanet.coordinates, researchKey,
+      }), `${name} wurde gestartet.`);
+    },
+    cancelResearch() {
+      return perform(() => server.call('cancelResearch'), 'Forschung abgebrochen. Die Rohstoffe wurden erstattet.');
     },
     async colonize(position) {
       try {
