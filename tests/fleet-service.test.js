@@ -118,7 +118,8 @@ function colony({ coordinates, ownerEmail, ownerName, name, timestamp, ships = {
     coordinates, systemKey: `${galaxy}:${system}`, galaxy, system, position,
     ownerEmail, ownerName, name, colonizedAt: new Date(timestamp).toISOString(),
     planetType: 'Terranische Welt', fields: 180, diameter: 12000, temperature: { min: 5, max: 35 },
-    bonuses: { solarEnergy: 0, deuterium: 0, resource: null }, buildings: { shipyard: 4 }, buildQueue: [],
+    bonuses: { solarEnergy: 0, deuterium: 0, resource: null },
+    buildings: { shipyard: 4, metalStorage: 6, crystalStorage: 6, deuteriumTank: 6 }, buildQueue: [],
     resources: { metal: 100_000, crystal: 100_000, deuterium: 100_000, lastCalculatedAt: new Date(timestamp).toISOString() },
     ships, shipyardQueue: [],
   };
