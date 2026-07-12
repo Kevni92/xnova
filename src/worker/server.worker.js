@@ -1,6 +1,8 @@
 import { AuthError, createAuthService } from '../domain/auth-service.js';
+import { FleetError, createFleetService } from '../domain/fleet-service.js';
 import { PlanetError, createPlanetService } from '../domain/planet-service.js';
 import { ResearchError, createResearchService } from '../domain/research-service.js';
+import { ShipyardError, createShipyardService } from '../domain/shipyard-service.js';
 import { UniverseError, createStarSystemService } from '../domain/star-system-service.js';
 import { createIndexedDbStore } from './indexed-db-store.js';
 
@@ -9,6 +11,8 @@ const auth = createAuthService({ store });
 const universe = createStarSystemService({ store });
 const planets = createPlanetService({ store });
 const research = createResearchService({ store });
+const shipyard = createShipyardService({ store });
+const fleets = createFleetService({ store });
 
 const handlers = {
   register: (payload) => auth.register(payload),
@@ -26,6 +30,8 @@ const handlers = {
     const homeworld = await universe.ensureHomeworld({ ownerEmail: user.email, ownerName: user.username });
     await planets.ensureActivePlanet({ ownerEmail: user.email, fallbackCoordinates: homeworld.coordinates });
     await research.syncResearch({ ownerEmail: user.email });
+    await shipyard.syncAll({ ownerEmail: user.email });
+    await fleets.syncFleets({ ownerEmail: user.email });
     return planets.getGameState({ ownerEmail: user.email });
   },
   selectPlanet: async (payload) => {
@@ -60,6 +66,30 @@ const handlers = {
     const user = await requireUser();
     return research.cancelResearch({ ownerEmail: user.email });
   },
+  getShipyardState: async (payload) => {
+    const user = await requireUser();
+    return shipyard.getShipyardState({ ownerEmail: user.email, ...payload });
+  },
+  buildShips: async (payload) => {
+    const user = await requireUser();
+    return shipyard.buildShips({ ownerEmail: user.email, ...payload });
+  },
+  cancelShipyardJob: async (payload) => {
+    const user = await requireUser();
+    return shipyard.cancelShipyardJob({ ownerEmail: user.email, ...payload });
+  },
+  getFleetState: async (payload) => {
+    const user = await requireUser();
+    return fleets.getFleetState({ ownerEmail: user.email, ...payload });
+  },
+  launchFleet: async (payload) => {
+    const user = await requireUser();
+    return fleets.launchFleet({ ownerEmail: user.email, ...payload });
+  },
+  recallFleet: async (payload) => {
+    const user = await requireUser();
+    return fleets.recallFleet({ ownerEmail: user.email, ...payload });
+  },
   getSystem: async (payload) => {
     const user = await requireUser();
     await universe.ensureHomeworld({ ownerEmail: user.email, ownerName: user.username });
@@ -92,7 +122,12 @@ async function requireUser() {
 }
 
 function serializeError(error) {
-  if (error instanceof AuthError || error instanceof UniverseError || error instanceof PlanetError || error instanceof ResearchError) {
+  if (error instanceof AuthError
+    || error instanceof UniverseError
+    || error instanceof PlanetError
+    || error instanceof ResearchError
+    || error instanceof ShipyardError
+    || error instanceof FleetError) {
     return { code: error.code, message: error.message };
   }
   console.error(error);
