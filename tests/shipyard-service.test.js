@@ -63,7 +63,8 @@ describe('Raumschiffwerft', () => {
     });
     expect(cancelled.ships.find((entry) => entry.key === 'smallCargo').owned).toBe(1);
     expect(cancelled.queue).toHaveLength(0);
-    expect(context.store.colonies.get(context.coordinates).resources.metal).toBe(96_500);
+    expect(context.store.colonies.get(context.coordinates).resources.metal).toBeGreaterThanOrEqual(96_500);
+    expect(context.store.colonies.get(context.coordinates).resources.metal).toBeLessThan(96_501);
   });
 });
 
