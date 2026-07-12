@@ -41,6 +41,24 @@ test('technische UI bleibt erhalten und Gebäude funktionieren real', async ({ p
   await expect(page.getByTestId('nav-buildings')).toHaveAttribute('aria-pressed', 'true');
   const mine = page.getByTestId('building-metalMine');
   await expect(mine).toContainText('Metallmine');
+
+  const buildingLayout = await mine.evaluate((card) => {
+    const visual = card.querySelector('.game-card__visual').getBoundingClientRect();
+    const body = card.querySelector('.building-card__body').getBoundingClientRect();
+    return {
+      display: getComputedStyle(card).display,
+      visualRatio: visual.width / visual.height,
+      textIsRightOfVisual: body.left >= visual.right - 1,
+      cardHeight: card.getBoundingClientRect().height,
+    };
+  });
+  expect(buildingLayout.display).toBe('grid');
+  expect(Math.abs(buildingLayout.visualRatio - 4 / 3)).toBeLessThan(0.08);
+  expect(buildingLayout.textIsRightOfVisual).toBe(true);
+  expect(buildingLayout.cardHeight).toBeLessThan(360);
+  await expect(mine.locator('.building-card__description .resource-icon--metal')).toHaveCount(1);
+  await expect(mine.locator('.building-card__upgrade-costs .resource-icon--metal')).toHaveCount(1);
+
   await mine.getByRole('button', { name: 'Stufe 1 ausbauen' }).click();
   await expect(page.getByTestId('game-notice')).toContainText('Bauwarteschlange');
   await expect(page.getByTestId('resource-metal')).toContainText('440');
@@ -56,4 +74,17 @@ test('technische UI bleibt erhalten und Gebäude funktionieren real', async ({ p
   await page.setViewportSize({ width: 560, height: 900 });
   await page.getByTestId('mobile-menu-toggle').click();
   await expect(page.getByTestId('ui-showcase')).toHaveClass(/is-menu-open/);
+  await page.getByTestId('nav-buildings').click();
+
+  const mobileMine = page.getByTestId('building-metalMine');
+  const mobileLayout = await mobileMine.evaluate((card) => {
+    const visual = card.querySelector('.game-card__visual').getBoundingClientRect();
+    const body = card.querySelector('.building-card__body').getBoundingClientRect();
+    return {
+      visualRatio: visual.width / visual.height,
+      textIsRightOfVisual: body.left >= visual.right - 1,
+    };
+  });
+  expect(Math.abs(mobileLayout.visualRatio - 4 / 3)).toBeLessThan(0.08);
+  expect(mobileLayout.textIsRightOfVisual).toBe(true);
 });

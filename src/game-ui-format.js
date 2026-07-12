@@ -4,6 +4,11 @@ export const RESOURCE_META = Object.freeze({
   deuterium: { label: 'Deuterium', icon: 'D' },
 });
 
+const RESOURCE_REFERENCE_META = Object.freeze({
+  ...RESOURCE_META,
+  energy: { label: 'Energie', icon: 'E' },
+});
+
 export function formatNumber(value) {
   return new Intl.NumberFormat('de-DE').format(Math.floor(Number(value) || 0));
 }
@@ -44,10 +49,29 @@ export function escapeHtml(value) {
     .replaceAll("'", '&#039;');
 }
 
+export function resourceIconMarkup(key) {
+  const meta = RESOURCE_REFERENCE_META[key];
+  if (!meta) {
+    return '';
+  }
+
+  return `<span class="resource-icon resource-icon--${key}" aria-label="${meta.label}" title="${meta.label}">${meta.icon}</span>`;
+}
+
+export function resourceTextMarkup(value) {
+  let markup = escapeHtml(value);
+
+  for (const [key, meta] of Object.entries(RESOURCE_REFERENCE_META)) {
+    markup = markup.replace(new RegExp(`\\b${meta.label}\\b`, 'g'), resourceIconMarkup(key));
+  }
+
+  return markup;
+}
+
 export function costMarkup(costs) {
   return Object.entries(RESOURCE_META)
     .filter(([key]) => Number(costs[key]) > 0)
-    .map(([key, meta]) => `<span class="cost cost--${key}">${meta.icon} ${formatNumber(costs[key])}</span>`)
+    .map(([key]) => `<span class="cost cost--${key}">${resourceIconMarkup(key)}<span>${formatNumber(costs[key])}</span></span>`)
     .join('') || '<span class="cost">Kostenlos</span>';
 }
 
