@@ -25,7 +25,22 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Unit-Tests
-        run: npm test
+        id: unit-tests
+        continue-on-error: true
+        run: npm test > unit-test.log 2>&1
+
+      - name: Unit-Test-Log hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-log
+          path: unit-test.log
+
+      - name: Unit-Test-Ergebnis prüfen
+        if: steps.unit-tests.outcome == 'failure'
+        run: |
+          cat unit-test.log
+          exit 1
 
       - name: Produktions-Build
         run: npm run build
