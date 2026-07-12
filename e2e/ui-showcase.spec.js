@@ -25,6 +25,17 @@ test('technische UI bleibt erhalten und Gebäude funktionieren real', async ({ p
   await expect(page.getByTestId('resource-metal').locator('.resource-icon--metal .resource-icon__glyph')).toHaveCount(1);
   await expect(page.getByTestId('resource-metal').locator('.resource-item__icon')).toHaveText('');
 
+  const resourceIconStyles = await page.evaluate(() => {
+    const icons = [...document.querySelectorAll('.resource-icon')];
+    const metal = document.querySelector('.resource-icon--metal');
+    return {
+      allBorderless: icons.every((icon) => Number.parseFloat(getComputedStyle(icon).borderTopWidth) === 0),
+      metalColor: getComputedStyle(metal).color,
+    };
+  });
+  expect(resourceIconStyles.allBorderless).toBe(true);
+  expect(resourceIconStyles.metalColor).toBe('rgb(255, 93, 98)');
+
   const visualLanguage = await page.evaluate(() => {
     const panel = getComputedStyle(document.querySelector('.component-panel'));
     const primaryButton = getComputedStyle(document.querySelector('.button--primary'));
