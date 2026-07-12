@@ -81,6 +81,16 @@ export const BUILDING_DEFINITIONS = Object.freeze({
     baseDuration: 50,
     effect: 'buildSpeed',
   }),
+  researchLab: definition({
+    name: 'Forschungslabor',
+    shortName: 'Labor',
+    description: 'Ermöglicht neue Technologien und verkürzt die Forschungszeit auf diesem Planeten.',
+    icon: 'F',
+    baseCost: { metal: 200, crystal: 400, deuterium: 200 },
+    costFactor: 2,
+    baseDuration: 60,
+    effect: 'researchSpeed',
+  }),
 });
 
 export const BUILDING_KEYS = Object.freeze(Object.keys(BUILDING_DEFINITIONS));
@@ -176,6 +186,7 @@ export function describeBuildingEffect(key, targetLevel, bonuses = {}, baseBuild
   if (effect === 'metalStorage') return `${formatNumber(economy.storage.metal)} Metall Kapazität`;
   if (effect === 'crystalStorage') return `${formatNumber(economy.storage.crystal)} Kristall Kapazität`;
   if (effect === 'deuteriumStorage') return `${formatNumber(economy.storage.deuterium)} Deuterium Kapazität`;
+  if (effect === 'researchSpeed') return `Laborstufe ${targetLevel} für schnellere Forschung`;
   return `${Math.round((1 - 1 / (1 + targetLevel * 0.5)) * 100)} % kürzere Bauzeit`;
 }
 

@@ -1,5 +1,6 @@
 import { AuthError, createAuthService } from '../domain/auth-service.js';
 import { PlanetError, createPlanetService } from '../domain/planet-service.js';
+import { ResearchError, createResearchService } from '../domain/research-service.js';
 import { UniverseError, createStarSystemService } from '../domain/star-system-service.js';
 import { createIndexedDbStore } from './indexed-db-store.js';
 
@@ -7,6 +8,7 @@ const store = createIndexedDbStore();
 const auth = createAuthService({ store });
 const universe = createStarSystemService({ store });
 const planets = createPlanetService({ store });
+const research = createResearchService({ store });
 
 const handlers = {
   register: (payload) => auth.register(payload),
@@ -23,6 +25,7 @@ const handlers = {
     const user = await requireUser();
     const homeworld = await universe.ensureHomeworld({ ownerEmail: user.email, ownerName: user.username });
     await planets.ensureActivePlanet({ ownerEmail: user.email, fallbackCoordinates: homeworld.coordinates });
+    await research.syncResearch({ ownerEmail: user.email });
     return planets.getGameState({ ownerEmail: user.email });
   },
   selectPlanet: async (payload) => {
@@ -44,6 +47,18 @@ const handlers = {
   cancelBuildJob: async (payload) => {
     const user = await requireUser();
     return planets.cancelBuildJob({ ownerEmail: user.email, ...payload });
+  },
+  getResearchState: async (payload) => {
+    const user = await requireUser();
+    return research.getResearchState({ ownerEmail: user.email, ...payload });
+  },
+  startResearch: async (payload) => {
+    const user = await requireUser();
+    return research.startResearch({ ownerEmail: user.email, ...payload });
+  },
+  cancelResearch: async () => {
+    const user = await requireUser();
+    return research.cancelResearch({ ownerEmail: user.email });
   },
   getSystem: async (payload) => {
     const user = await requireUser();
@@ -77,7 +92,7 @@ async function requireUser() {
 }
 
 function serializeError(error) {
-  if (error instanceof AuthError || error instanceof UniverseError || error instanceof PlanetError) {
+  if (error instanceof AuthError || error instanceof UniverseError || error instanceof PlanetError || error instanceof ResearchError) {
     return { code: error.code, message: error.message };
   }
   console.error(error);
