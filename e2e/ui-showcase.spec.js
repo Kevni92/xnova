@@ -22,6 +22,8 @@ test('technische UI bleibt erhalten und Gebäude funktionieren real', async ({ p
   await expect(page.getByTestId('ui-showcase')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Aktionen und Auswahl' })).toBeVisible();
   await expect(page.getByTestId('resource-metal')).toContainText('500');
+  await expect(page.getByTestId('resource-metal').locator('.resource-icon--metal .resource-icon__glyph')).toHaveCount(1);
+  await expect(page.getByTestId('resource-metal').locator('.resource-item__icon')).toHaveText('');
 
   const visualLanguage = await page.evaluate(() => {
     const panel = getComputedStyle(document.querySelector('.component-panel'));
@@ -58,6 +60,7 @@ test('technische UI bleibt erhalten und Gebäude funktionieren real', async ({ p
   expect(buildingLayout.cardHeight).toBeLessThan(360);
   await expect(mine.locator('.building-card__description .resource-icon--metal')).toHaveCount(1);
   await expect(mine.locator('.building-card__upgrade-costs .resource-icon--metal')).toHaveCount(1);
+  await expect(mine.locator('.building-card__upgrade-costs .resource-icon--metal .resource-icon__glyph')).toHaveCount(1);
 
   await mine.getByRole('button', { name: 'Stufe 1 ausbauen' }).click();
   await expect(page.getByTestId('game-notice')).toContainText('Bauwarteschlange');
