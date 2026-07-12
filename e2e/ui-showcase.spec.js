@@ -50,6 +50,30 @@ test('technische UI bleibt erhalten und Gebäude funktionieren real', async ({ p
   expect(visualLanguage.primaryShadow).not.toBe('none');
   expect(visualLanguage.accent).toBe('#24d6d4');
 
+  await page.getByTestId('nav-resources').click();
+  const resourceViewStyles = await page.evaluate(() => {
+    const expectedColors = {
+      metal: 'rgb(255, 93, 98)',
+      crystal: 'rgb(143, 229, 245)',
+      deuterium: 'rgb(140, 232, 190)',
+      energy: 'rgb(240, 216, 137)',
+    };
+    const colorsMatch = Object.entries(expectedColors).every(([key, color]) => {
+      const icons = [...document.querySelectorAll(`.resource-icon--${key}`)];
+      return icons.length > 0 && icons.every((icon) => getComputedStyle(icon).color === color);
+    });
+    const iconBadges = [...document.querySelectorAll('.badge')]
+      .filter((badge) => badge.querySelector(':scope > .resource-icon:only-child'));
+    return {
+      colorsMatch,
+      iconBadgesBorderless: iconBadges.every((badge) => Number.parseFloat(getComputedStyle(badge).borderTopWidth) === 0),
+      iconBadgesTransparent: iconBadges.every((badge) => getComputedStyle(badge).backgroundColor === 'rgba(0, 0, 0, 0)'),
+    };
+  });
+  expect(resourceViewStyles.colorsMatch).toBe(true);
+  expect(resourceViewStyles.iconBadgesBorderless).toBe(true);
+  expect(resourceViewStyles.iconBadgesTransparent).toBe(true);
+
   await page.getByTestId('nav-buildings').click();
   await expect(page.getByTestId('nav-buildings')).toHaveAttribute('aria-pressed', 'true');
   const mine = page.getByTestId('building-metalMine');
@@ -72,6 +96,28 @@ test('technische UI bleibt erhalten und Gebäude funktionieren real', async ({ p
   await expect(mine.locator('.building-card__description .resource-icon--metal')).toHaveCount(1);
   await expect(mine.locator('.building-card__upgrade-costs .resource-icon--metal')).toHaveCount(1);
   await expect(mine.locator('.building-card__upgrade-costs .resource-icon--metal .resource-icon__glyph')).toHaveCount(1);
+
+  const buildingResourceStyles = await mine.evaluate((card) => {
+    const expectedColors = {
+      metal: 'rgb(255, 93, 98)',
+      crystal: 'rgb(143, 229, 245)',
+      deuterium: 'rgb(140, 232, 190)',
+      energy: 'rgb(240, 216, 137)',
+    };
+    const icons = [...card.querySelectorAll('.resource-icon')];
+    const costTokens = [...card.querySelectorAll('.cost-row .cost')];
+    return {
+      allIconColorsMatch: icons.every((icon) => {
+        const key = Object.keys(expectedColors).find((entry) => icon.classList.contains(`resource-icon--${entry}`));
+        return !key || getComputedStyle(icon).color === expectedColors[key];
+      }),
+      allCostTokensBorderless: costTokens.every((token) => Number.parseFloat(getComputedStyle(token).borderTopWidth) === 0),
+      allCostTokensTransparent: costTokens.every((token) => getComputedStyle(token).backgroundColor === 'rgba(0, 0, 0, 0)'),
+    };
+  });
+  expect(buildingResourceStyles.allIconColorsMatch).toBe(true);
+  expect(buildingResourceStyles.allCostTokensBorderless).toBe(true);
+  expect(buildingResourceStyles.allCostTokensTransparent).toBe(true);
 
   await mine.getByRole('button', { name: 'Stufe 1 ausbauen' }).click();
   await expect(page.getByTestId('game-notice')).toContainText('Bauwarteschlange');
