@@ -21,19 +21,19 @@
   overflow: visible;
 }
 
-.resource-icon--metal {
+.resource-icon.resource-icon--metal {
   color: #ff5d62;
 }
 
-.resource-icon--crystal {
+.resource-icon.resource-icon--crystal {
   color: #8fe5f5;
 }
 
-.resource-icon--deuterium {
+.resource-icon.resource-icon--deuterium {
   color: #8ce8be;
 }
 
-.resource-icon--energy {
+.resource-icon.resource-icon--energy {
   color: #f0d889;
 }
 
@@ -66,6 +66,20 @@
   --resource-icon-size: 1rem;
   margin: 0;
   vertical-align: 0;
+}
+
+.cost-row .cost {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.badge:has(> .resource-icon:only-child) {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .resource-heading {
