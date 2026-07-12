@@ -15,6 +15,8 @@ export function bindGameEvents(root, handlers) {
     if (action === 'upgrade-building') await handlers.upgradeBuilding(target.dataset.building, target.dataset.name);
     if (action === 'demolish-building') await handlers.demolishBuilding(target.dataset.building, target.dataset.name);
     if (action === 'cancel-job') await handlers.cancelJob(target.dataset.job);
+    if (action === 'start-research') await handlers.startResearch(target.dataset.research, target.dataset.name);
+    if (action === 'cancel-research') await handlers.cancelResearch();
     if (action === 'colonize') await handlers.colonize(Number(target.dataset.position));
   };
 
