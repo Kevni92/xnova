@@ -1,12 +1,12 @@
 export const RESOURCE_META = Object.freeze({
-  metal: { label: 'Metall' },
-  crystal: { label: 'Kristall' },
-  deuterium: { label: 'Deuterium' },
+  metal: { label: 'Metall', iconHref: './assets/icons/icon_resource_metal.svg#icon-resource-metal' },
+  crystal: { label: 'Kristall', iconHref: './assets/icons/icon_resource_crystal.svg#icon-resource-crystal' },
+  deuterium: { label: 'Deuterium', iconHref: './assets/icons/icon_resource_deuterium.svg#icon-resource-deuterium' },
 });
 
 const RESOURCE_REFERENCE_META = Object.freeze({
   ...RESOURCE_META,
-  energy: { label: 'Energie' },
+  energy: { label: 'Energie', iconHref: './assets/icons/icon_resource_energy.svg#icon-resource-energy' },
 });
 
 export function formatNumber(value) {
@@ -60,7 +60,7 @@ export function resourceIconMarkup(key, { className = '', decorative = false } =
     ? 'aria-hidden="true"'
     : `role="img" aria-label="${meta.label}" title="${meta.label}"`;
 
-  return `<span class="${classes}" ${accessibility}><span class="resource-icon__glyph" aria-hidden="true"></span></span>`;
+  return `<span class="${classes}" ${accessibility}><svg class="resource-icon__glyph" viewBox="0 0 24 24" aria-hidden="true"><use href="${meta.iconHref}"></use></svg></span>`;
 }
 
 export function resourceValueMarkup(key, value, { className = '', decorativeIcon = true } = {}) {
