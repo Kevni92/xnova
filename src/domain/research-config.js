@@ -67,7 +67,7 @@ export const RESEARCH_DEFINITIONS = Object.freeze({
     name: 'Computertechnik', category: 'operations', icon: 'C',
     description: 'Erhöht die Zahl gleichzeitig kontrollierbarer Flotten.',
     baseCost: { metal: 0, crystal: 400, deuterium: 600 }, costFactor: 2,
-    labLevel: 1, technologies: {}, effect: (level) => `${level + 1} Flottenslots (später)`,
+    labLevel: 1, technologies: {}, effect: (level) => `${level + 1} Flottenslots`,
   }),
   astrophysics: definition({
     name: 'Astrophysik', category: 'operations', icon: '★',
