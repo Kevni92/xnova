@@ -1,10 +1,11 @@
 import { bindGameEvents } from './game-ui-events.js';
+import { updateFleetPlanner } from './game-ui-fleet.js';
 import { renderGameShell } from './game-ui-shell.js';
 
 export async function mountGameFeature({ root, server, user, onLogout }) {
   const model = {
-    state: null, detail: null, galaxy: null, research: null, view: 'overview', notice: null,
-    galaxyNotice: null, loading: false, menuOpen: false,
+    state: null, detail: null, galaxy: null, research: null, shipyard: null, fleet: null,
+    view: 'overview', notice: null, galaxyNotice: null, loading: false, menuOpen: false,
   };
 
   async function loadGalaxy() {
@@ -14,6 +15,18 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
 
   async function loadResearch() {
     model.research = await server.call('getResearchState', {
+      coordinates: model.state.activePlanet.coordinates,
+    });
+  }
+
+  async function loadShipyard() {
+    model.shipyard = await server.call('getShipyardState', {
+      coordinates: model.state.activePlanet.coordinates,
+    });
+  }
+
+  async function loadFleet() {
+    model.fleet = await server.call('getFleetState', {
       coordinates: model.state.activePlanet.coordinates,
     });
   }
@@ -31,6 +44,8 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
       }
       if (model.view === 'galaxy') await loadGalaxy();
       if (model.view === 'research') await loadResearch();
+      if (model.view === 'shipyard') await loadShipyard();
+      if (model.view === 'fleet') await loadFleet();
       if (!quiet) model.notice = null;
     } catch (error) {
       model.notice = { tone: 'danger', text: error.message };
@@ -43,12 +58,13 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
   function render() {
     root.innerHTML = renderGameShell(model, user);
     bindGameEvents(root, handlers);
+    if (model.view === 'fleet') updateFleetPlanner(root.querySelector('[data-fleet-form]'));
   }
 
   async function perform(operation, successText) {
     if (model.loading) return;
     model.loading = true;
-    root.querySelectorAll('button, select').forEach((element) => { element.disabled = true; });
+    root.querySelectorAll('button, select, input').forEach((element) => { element.disabled = true; });
     try {
       await operation();
       model.notice = { tone: 'success', text: successText };
@@ -60,6 +76,8 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
         });
       }
       if (model.view === 'research') await loadResearch();
+      if (model.view === 'shipyard') await loadShipyard();
+      if (model.view === 'fleet') await loadFleet();
       if (model.view === 'galaxy') await loadGalaxy();
     } catch (error) {
       model.notice = { tone: 'danger', text: error.message };
@@ -74,11 +92,14 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
       model.view = view;
       model.detail = null;
       model.menuOpen = false;
-      if (view === 'galaxy') {
-        try { await loadGalaxy(); } catch (error) { model.galaxyNotice = { tone: 'danger', text: error.message }; }
-      }
-      if (view === 'research') {
-        try { await loadResearch(); } catch (error) { model.notice = { tone: 'danger', text: error.message }; }
+      try {
+        if (view === 'galaxy') await loadGalaxy();
+        if (view === 'research') await loadResearch();
+        if (view === 'shipyard') await loadShipyard();
+        if (view === 'fleet') await loadFleet();
+      } catch (error) {
+        if (view === 'galaxy') model.galaxyNotice = { tone: 'danger', text: error.message };
+        else model.notice = { tone: 'danger', text: error.message };
       }
       render();
     },
@@ -121,6 +142,34 @@ export async function mountGameFeature({ root, server, user, onLogout }) {
     },
     cancelResearch() {
       return perform(() => server.call('cancelResearch'), 'Forschung abgebrochen. Die Rohstoffe wurden erstattet.');
+    },
+    buildShips(shipKey, name, quantity) {
+      return perform(() => server.call('buildShips', {
+        coordinates: model.state.activePlanet.coordinates, shipKey, quantity,
+      }), `${quantity} × ${name} wurde in die Werftwarteschlange aufgenommen.`);
+    },
+    cancelShipyardJob(jobId) {
+      return perform(() => server.call('cancelShipyardJob', {
+        coordinates: model.state.activePlanet.coordinates, jobId,
+      }), 'Werftauftrag abgebrochen. Offene Einheiten wurden zu 75 % erstattet.');
+    },
+    launchFleet(payload) {
+      const missionName = payload.mission === 'station' ? 'Stationierung' : 'Transport';
+      return perform(() => server.call('launchFleet', {
+        coordinates: model.state.activePlanet.coordinates,
+        ...payload,
+      }), `${missionName} wurde gestartet.`);
+    },
+    recallFleet(fleetId) {
+      return perform(() => server.call('recallFleet', { fleetId }), 'Die Flotte wurde zurückgerufen.');
+    },
+    previewFleet(form) { updateFleetPlanner(form); },
+    fillFleetTarget(form, coordinates) {
+      const [galaxy, system, position] = coordinates.split(':');
+      form.elements.galaxy.value = galaxy;
+      form.elements.system.value = system;
+      form.elements.position.value = position;
+      updateFleetPlanner(form);
     },
     async colonize(position) {
       try {
