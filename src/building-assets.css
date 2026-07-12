@@ -1,0 +1,14 @@
+.building-card .game-card__visual--metalMine {
+  background-image:
+    linear-gradient(180deg, rgba(2, 9, 11, 0.02), rgba(2, 9, 11, 0.42)),
+    url('/assets/buildings/building_metal_mine_desert.svg');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: transparent;
+  text-shadow: none;
+}
+
+.building-card .game-card__visual--metalMine .building-card__placeholder-icon {
+  opacity: 0;
+}
