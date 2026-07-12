@@ -9,8 +9,11 @@ Barebone eines statischen Singleplayer-Weltraumspiels. Der lokale „Server“ l
 - Login und lokale Sitzung
 - Username-Vergabe nach dem ersten Login
 - Responsive Spielansicht mit Hauptmenü und Ressourcenleiste
-- Interaktive UI-Komponenten-Referenz für Formulare, Tabellen, Feedback und Zustände
-- Spieltypische Beispiele für Gebäude, Forschung, Warteschlange, Flotten und Galaxie
+- Planetare Ressourcenproduktion, Gebäude und Bauwarteschlange
+- Accountweite Forschung mit Voraussetzungen und Forschungszeit
+- Raumschiffwerft mit Stapelproduktion und planetarem Schiffsbestand
+- Flottenmissionen für Transport und Stationierung inklusive Fracht, Treibstoff, Flugzeit und Rückruf
+- Galaxieansicht, Planetenwechsel und Kolonisierung
 - Logout aus der Spielansicht
 - Unit-Tests, Browser-Tests und Produktions-Build in GitHub Actions
 
@@ -21,7 +24,7 @@ npm install
 npm run dev
 ```
 
-Nach Registrierung, Login und Username-Vergabe öffnet sich die UI-Showcase-Seite.
+Nach Registrierung, Login und Username-Vergabe öffnet sich die Spielansicht.
 
 ## Tests
 
@@ -43,7 +46,7 @@ Pull Requests werden automatisch getestet. Nach einem Merge nach `main` führt d
 Einmalige GitHub-Einstellung:
 
 1. Das Repository muss bei GitHub Free öffentlich sein.
-2. Unter **Settings → Pages → Build and deployment → Source** muss **GitHub Actions** ausgewählt werden.
+2. Unter **Settings → Pages → Build and deployment → Source** muss **GitHub Actions** ausgewählt sein.
 3. Danach einen Merge nach `main` durchführen oder den Workflow **GitHub Pages** unter **Actions** manuell starten.
 
 ## Sicherheitshinweis
