@@ -4,9 +4,10 @@ import { chromeMarkup } from './game-ui-chrome.js';
 import { escapeHtml } from './game-ui-format.js';
 import { galaxyMarkup, placeholderMarkup } from './game-ui-galaxy.js';
 import { overviewMarkup, resourcesMarkup } from './game-ui-overview.js';
+import { researchMarkup } from './game-ui-research.js';
 
 export function renderGameShell(model, user) {
-  const { state, detail, galaxy, view, notice, galaxyNotice, menuOpen } = model;
+  const { state, detail, galaxy, research, view, notice, galaxyNotice, menuOpen } = model;
   if (!state) return '<section class="card compact centered"><p>Spielstand wird geladen …</p></section>';
   return `
     <div class="game-shell ${menuOpen ? 'is-menu-open' : ''}" data-testid="ui-showcase">
@@ -17,7 +18,7 @@ export function renderGameShell(model, user) {
         ${view === 'resources' ? resourcesMarkup(state) : ''}
         ${view === 'buildings' ? buildingsMarkup(state) : ''}
         ${view === 'detail' && detail ? detailMarkup(detail, state) : ''}
-        ${view === 'research' ? placeholderMarkup('Forschung', 'Technologien und Voraussetzungen werden als nächstes Feature umgesetzt.', '⌬') : ''}
+        ${view === 'research' ? researchMarkup(research) : ''}
         ${view === 'shipyard' ? placeholderMarkup('Werft', 'Schiffe und Verteidigungsanlagen folgen nach Forschung.', '△') : ''}
         ${view === 'fleet' ? placeholderMarkup('Flotte', 'Flottenaufträge sind noch nicht freigeschaltet.', '➤') : ''}
         ${view === 'galaxy' ? galaxyMarkup(galaxy, galaxyNotice) : ''}
