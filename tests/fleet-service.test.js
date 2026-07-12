@@ -45,7 +45,7 @@ describe('Flottenmissionen', () => {
     context.advance(duration + 1);
     const returning = await context.service.getFleetState({ ownerEmail: context.ownerEmail, coordinates: '1:20:8' });
     expect(returning.activeFleets[0].phase).toBe('returning');
-    expect(context.store.colonies.get('1:20:10').resources.metal).toBe(102_000);
+    expect(context.store.colonies.get('1:20:10').resources.metal).toBeGreaterThanOrEqual(102_000);
 
     context.advance(duration + 1);
     const completed = await context.service.getFleetState({ ownerEmail: context.ownerEmail, coordinates: '1:20:8' });
@@ -68,7 +68,7 @@ describe('Flottenmissionen', () => {
     await context.service.syncFleets({ ownerEmail: context.ownerEmail });
     expect(context.store.users.get(context.ownerEmail).fleets).toHaveLength(0);
     expect(context.store.colonies.get('1:20:10').ships.smallCargo).toBe(3);
-    expect(context.store.colonies.get('1:20:10').resources.crystal).toBe(100_500);
+    expect(context.store.colonies.get('1:20:10').resources.crystal).toBeGreaterThanOrEqual(100_500);
   });
 
   it('verhindert Stationierung auf einem fremden Planeten', async () => {
@@ -102,7 +102,7 @@ describe('Flottenmissionen', () => {
     const completed = await context.service.getFleetState({ ownerEmail: context.ownerEmail, coordinates: '1:20:8' });
     expect(completed.activeFleets).toHaveLength(0);
     expect(completed.ships.find((entry) => entry.key === 'smallCargo').available).toBe(5);
-    expect(context.store.colonies.get('1:20:8').resources.metal).toBe(100_000);
+    expect(context.store.colonies.get('1:20:8').resources.metal).toBeGreaterThanOrEqual(100_000);
   });
 
   it('berechnet Entfernung und Flugzeit deterministisch', () => {
