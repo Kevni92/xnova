@@ -1,6 +1,5 @@
 .resource-icon {
   --resource-icon-size: 1.2rem;
-  --resource-icon-image: none;
   display: inline-grid;
   width: var(--resource-icon-size);
   height: var(--resource-icon-size);
@@ -19,31 +18,25 @@
   display: block;
   width: 72%;
   height: 72%;
-  background: currentColor;
-  -webkit-mask: var(--resource-icon-image) center / contain no-repeat;
-  mask: var(--resource-icon-image) center / contain no-repeat;
+  overflow: visible;
 }
 
 .resource-icon--metal {
-  --resource-icon-image: url('/assets/icons/icon_resource_metal.svg');
   border-color: rgba(151, 177, 181, 0.42);
   color: #c2d0d2;
 }
 
 .resource-icon--crystal {
-  --resource-icon-image: url('/assets/icons/icon_resource_crystal.svg');
   border-color: rgba(74, 202, 230, 0.46);
   color: #8fe5f5;
 }
 
 .resource-icon--deuterium {
-  --resource-icon-image: url('/assets/icons/icon_resource_deuterium.svg');
   border-color: rgba(65, 207, 160, 0.44);
   color: #8ce8be;
 }
 
 .resource-icon--energy {
-  --resource-icon-image: url('/assets/icons/icon_resource_energy.svg');
   border-color: rgba(226, 189, 88, 0.46);
   color: #f0d889;
 }
