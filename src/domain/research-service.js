@@ -53,7 +53,8 @@ export function createResearchService({ store, now = () => Date.now(), idFactory
     return withAccountLock(ownerEmail, async () => {
       const timestamp = normalizeNow(now());
       const account = normalizeResearchAccount(await requireUser(ownerEmail));
-      materializeResearch(account, timestamp);
+      const completed = materializeResearch(account, timestamp);
+      if (completed) await store.putUser(account);
       if (account.researchQueue) throw new ResearchError('RESEARCH_BUSY', 'Es läuft bereits ein Forschungsauftrag.');
 
       const planet = await loadPlanet(ownerEmail, coordinates, timestamp);
@@ -102,7 +103,11 @@ export function createResearchService({ store, now = () => Date.now(), idFactory
     return withAccountLock(ownerEmail, async () => {
       const timestamp = normalizeNow(now());
       const account = normalizeResearchAccount(await requireUser(ownerEmail));
-      materializeResearch(account, timestamp);
+      const completed = materializeResearch(account, timestamp);
+      if (completed) {
+        await store.putUser(account);
+        throw new ResearchError('NO_RESEARCH', 'Die Forschung wurde bereits abgeschlossen.');
+      }
       const job = account.researchQueue;
       if (!job) throw new ResearchError('NO_RESEARCH', 'Es läuft aktuell keine Forschung.');
 
